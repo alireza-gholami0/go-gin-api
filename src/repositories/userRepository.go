@@ -1,39 +1,48 @@
 package repositories
 
 import (
-	"context"
 	"github.com/alireza-gholami0/go-gin-api/src/models"
 	"gorm.io/gorm"
 )
 
 type userRepository struct {
-	database   gorm.DB
-	collection string
+	database gorm.DB
 }
 
-func NewUserRepository(db gorm.DB, collection string) models.UserRepository {
-	return &userRepository{
-		database:   db,
-		collection: collection,
+type UserRepository interface {
+	Create(user models.User) (models.User, error)
+	GetByEmail(email string) (models.User, error)
+	GetByID(id string) (models.User, error)
+}
+
+var ur *userRepository
+
+func GetUserRepositoryIns(db gorm.DB) UserRepository {
+	if ur == nil {
+		ur = &userRepository{
+			database: db,
+		}
 	}
+	return ur
 }
 
-func (u userRepository) Create(c context.Context, user *models.User) error {
+func (ur userRepository) Create(user models.User) (models.User, error) {
+	err := ur.database.Create(&user).Error
+	return user, err
+}
+
+func (ur userRepository) Fetch() ([]models.User, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (u userRepository) Fetch(c context.Context) ([]models.User, error) {
-	//TODO implement me
-	panic("implement me")
+func (ur userRepository) GetByEmail(email string) (models.User, error) {
+	var user models.User
+	err := ur.database.Where("email = ?", email).First(&user).Error
+	return user, err
 }
 
-func (u userRepository) GetByEmail(c context.Context, email string) (models.User, error) {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (u userRepository) GetByID(c context.Context, id string) (models.User, error) {
+func (ur userRepository) GetByID(id string) (models.User, error) {
 	//TODO implement me
 	panic("implement me")
 }

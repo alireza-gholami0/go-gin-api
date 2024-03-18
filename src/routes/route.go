@@ -9,5 +9,7 @@ import (
 func Setup(time time.Duration, db gorm.DB, gin *gin.Engine) {
 	publicRouter := gin.Group("")
 
+	NewLoginRouter(time, db, publicRouter)
 	NewSignupRouter(time, db, publicRouter)
+
 }

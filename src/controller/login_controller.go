@@ -7,12 +7,12 @@ import (
 	"net/http"
 )
 
-type SignupController struct {
+type LoginController struct {
 	UserService services.UserService
 }
 
-func (sc *SignupController) Signup(c *gin.Context) {
-	var request models.SignupRequest
+func (lc *LoginController) Login(c *gin.Context) {
+	var request models.LoginRequest
 	var err error
 
 	err = c.ShouldBind(&request)
@@ -20,9 +20,11 @@ func (sc *SignupController) Signup(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{Message: err.Error()})
 		return
 	}
-	response, _ := sc.UserService.CreateUser(c, request)
+
+	response, err := lc.UserService.Login(c, request)
 	if response != nil {
 		c.JSON(http.StatusOK, response)
 		return
 	}
+
 }

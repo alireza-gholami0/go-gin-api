@@ -9,11 +9,11 @@ import (
 	"time"
 )
 
-func NewSignupRouter(timeout time.Duration, db gorm.DB, group *gin.RouterGroup) {
+func NewLoginRouter(timeout time.Duration, db gorm.DB, group *gin.RouterGroup) {
 	ur := repositories.GetUserRepositoryIns(db)
 	us := services.GetUSerServiceIns(ur, timeout)
-	sc := controller.SignupController{
+	lc := controller.LoginController{
 		UserService: us,
 	}
-	group.POST("/signup", sc.Signup)
+	group.POST("/login", lc.Login)
 }
