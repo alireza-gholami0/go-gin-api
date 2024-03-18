@@ -61,10 +61,9 @@ func (u userService) CreateUser(c *gin.Context, request models.SignupRequest) (*
 		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Message: err.Error()})
 		return nil, err
 	}
-
+	accessToken, err := CreateAccessToken(&user, "access_token_secret", 1)
 	response = models.SignupResponse{
-		AccessToken:  "4444",
-		RefreshToken: "4488",
+		AccessToken: accessToken,
 	}
 
 	return &response, nil
@@ -86,9 +85,9 @@ func (u userService) Login(c *gin.Context, request models.LoginRequest) (*models
 		return nil, err
 	}
 
+	accessToken, err := CreateAccessToken(&user, "access_token_secret", 1)
 	response = models.LoginResponse{
-		AccessToken:  "4444",
-		RefreshToken: "4488",
+		AccessToken: accessToken,
 	}
 
 	return &response, nil
