@@ -20,12 +20,7 @@ func (tc *TaskController) AddTask(c *gin.Context) {
 		return
 	}
 
-	userId, ok := c.Get("x-user-id")
-	if !ok {
-		c.JSON(http.StatusUnauthorized, models.ErrorResponse{Message: "user not found"})
-		return
-	}
-	userIdPtr, ok := userId.(*uint)
+	userIdPtr := getUserID(c)
 	task, err := tc.TaskService.AddTask(c, request, *userIdPtr)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{Message: err.Error()})
@@ -40,11 +35,22 @@ func (tc *TaskController) GetTask(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "id not exist"})
 		return
 	}
+	userIdPtr := getUserID(c)
 	taskId, _ := strconv.Atoi(id)
-	task, err := tc.TaskService.GetTask(c, uint(taskId))
+	task, err := tc.TaskService.GetTask(c, uint(taskId), *userIdPtr)
 	if err != nil {
 		return
 	}
 	c.JSON(http.StatusOK, task)
 
+}
+
+func getUserID(c *gin.Context) *uint {
+	userId, ok := c.Get("x-user-id")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, models.ErrorResponse{Message: "user not found"})
+		return nil
+	}
+	userIdPtr, ok := userId.(*uint)
+	return userIdPtr
 }

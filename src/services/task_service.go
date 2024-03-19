@@ -15,7 +15,7 @@ type taskService struct {
 
 type TaskService interface {
 	AddTask(c *gin.Context, request models.AddTaskRequest, userId uint) (models.Task, error)
-	GetTask(c *gin.Context, taskId uint) (*models.Task, error)
+	GetTask(c *gin.Context, taskId uint, userId uint) (*models.Task, error)
 }
 
 var ts *taskService
@@ -41,10 +41,14 @@ func (t taskService) AddTask(c *gin.Context, request models.AddTaskRequest, user
 	return task, err
 }
 
-func (t taskService) GetTask(c *gin.Context, taskId uint) (*models.Task, error) {
+func (t taskService) GetTask(c *gin.Context, taskId uint, userId uint) (*models.Task, error) {
 	task, err := t.taskRepository.GetByID(taskId)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "Task not found"})
+		return nil, err
+	}
+	if userId != task.User {
+		c.JSON(http.StatusUnauthorized, models.ErrorResponse{Message: "Access denied"})
 		return nil, err
 	}
 	return &task, nil
