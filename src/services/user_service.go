@@ -1,9 +1,13 @@
 package services
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/alireza-gholami0/go-gin-api/src/config"
 	"github.com/alireza-gholami0/go-gin-api/src/models"
 	"github.com/alireza-gholami0/go-gin-api/src/repositories"
 	"github.com/gin-gonic/gin"
+	"github.com/streadway/amqp"
 	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
@@ -88,6 +92,33 @@ func (u userService) Login(c *gin.Context, request models.LoginRequest) (*models
 	accessToken, err := CreateToken(user.ID, 5)
 	response = models.LoginResponse{
 		AccessToken: accessToken,
+	}
+	channel, err := config.GetRabbitChannel()
+	if err != nil {
+		fmt.Println("Rabbit connection disconnected")
+	} else {
+		jsonBody := models.LogLoginRabbit{
+			Email: request.Email,
+			Time:  time.Now(),
+		}
+		jsonBytes, err := json.Marshal(jsonBody)
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			err = channel.Publish(
+				"",                  // exchange
+				config.LoqQueueName, // key
+				false,               // mandatory
+				false,               // immediate
+				amqp.Publishing{
+					ContentType: "application/json",
+					Body:        jsonBytes,
+				},
+			)
+			if err != nil {
+				fmt.Println(err.Error())
+			}
+		}
 	}
 
 	return &response, nil

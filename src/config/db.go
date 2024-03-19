@@ -1,7 +1,8 @@
-package models
+package config
 
 import (
 	"fmt"
+	"github.com/alireza-gholami0/go-gin-api/src/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
@@ -26,7 +27,7 @@ func OpenDatabaseConnection() {
 	}
 	fmt.Println("Connected to the database")
 
-	err = Database.AutoMigrate(&User{})
+	err = Database.AutoMigrate(&models.User{})
 	if err != nil {
 		panic(err.Error())
 	}

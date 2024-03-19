@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/alireza-gholami0/go-gin-api/src/models"
+	"github.com/alireza-gholami0/go-gin-api/src/config"
 	"github.com/alireza-gholami0/go-gin-api/src/routes"
 	"github.com/alireza-gholami0/go-gin-api/src/utils"
 	"github.com/gin-gonic/gin"
@@ -10,12 +10,13 @@ import (
 
 func main() {
 	utils.Loadenv()
-	models.OpenDatabaseConnection()
+	config.OpenDatabaseConnection()
+	config.RabbitConnection()
 
 	timeout := time.Duration(10) * time.Second
 
 	engine := gin.Default()
-	routes.Setup(timeout, *models.Database, engine)
+	routes.Setup(timeout, *config.Database, engine)
 
 	engine.Run(":8080")
 	//if err != nil {
