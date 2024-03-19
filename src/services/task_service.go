@@ -48,7 +48,7 @@ func (t taskService) GetTask(c *gin.Context, taskId uint, userId uint) (*models.
 		return nil, err
 	}
 	if userId != task.User {
-		c.JSON(http.StatusUnauthorized, models.ErrorResponse{Message: "Access denied"})
+		c.JSON(http.StatusForbidden, models.ErrorResponse{Message: "Access denied"})
 		return nil, err
 	}
 	return &task, nil
