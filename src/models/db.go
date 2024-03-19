@@ -28,10 +28,10 @@ func OpenDatabaseConnection() {
 
 	err = Database.AutoMigrate(&User{})
 	if err != nil {
-		panic(err)
+		panic(err.Error())
 	}
-	err = Database.AutoMigrate(&Task{})
-	if err != nil {
-		panic(err)
-	}
+	//err = Database.AutoMigrate(&Task{})
+	//if err != nil {
+	//	panic(err.Error())
+	//}
 }

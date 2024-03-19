@@ -12,7 +12,7 @@ type userRepository struct {
 type UserRepository interface {
 	Create(user models.User) (models.User, error)
 	GetByEmail(email string) (models.User, error)
-	GetByID(id string) (models.User, error)
+	GetByID(id uint) (models.User, error)
 }
 
 var ur *userRepository
@@ -42,7 +42,8 @@ func (ur userRepository) GetByEmail(email string) (models.User, error) {
 	return user, err
 }
 
-func (ur userRepository) GetByID(id string) (models.User, error) {
-	//TODO implement me
-	panic("implement me")
+func (ur userRepository) GetByID(id uint) (models.User, error) {
+	var user models.User
+	err := ur.database.Where("id = ?", id).First(&user).Error
+	return user, err
 }
