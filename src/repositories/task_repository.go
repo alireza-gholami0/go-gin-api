@@ -12,7 +12,7 @@ type taskRepository struct {
 
 type TaskRepository interface {
 	Create(task models.Task) (models.Task, error)
-	GetByID(id string) (models.Task, error)
+	GetByID(id uint) (models.Task, error)
 }
 
 var tr *taskRepository
@@ -34,7 +34,8 @@ func (t taskRepository) Create(task models.Task) (models.Task, error) {
 	return task, err
 }
 
-func (t taskRepository) GetByID(id string) (models.Task, error) {
-	//TODO implement me
-	panic("implement me")
+func (t taskRepository) GetByID(id uint) (models.Task, error) {
+	var task models.Task
+	err := t.database.Where("id = ?", id).First(&task).Error
+	return task, err
 }

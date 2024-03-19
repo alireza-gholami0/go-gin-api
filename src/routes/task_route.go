@@ -15,5 +15,7 @@ func NewTaskRouter(timeout time.Duration, db gorm.DB, group *gin.RouterGroup) {
 	tc := controller.TaskController{
 		TaskService: ts,
 	}
-	group.POST("/task/add", tc.AddTask)
+	companies := group.Group("/task")
+	companies.POST("/add", tc.AddTask)
+	companies.GET("/get/:id", tc.GetTask)
 }

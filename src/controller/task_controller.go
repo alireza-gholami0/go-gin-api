@@ -5,6 +5,7 @@ import (
 	"github.com/alireza-gholami0/go-gin-api/src/services"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type TaskController struct {
@@ -31,4 +32,19 @@ func (tc *TaskController) AddTask(c *gin.Context) {
 		return
 	}
 	c.JSON(200, task)
+}
+
+func (tc *TaskController) GetTask(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, models.ErrorResponse{Message: "id not exist"})
+		return
+	}
+	taskId, _ := strconv.Atoi(id)
+	task, err := tc.TaskService.GetTask(c, uint(taskId))
+	if err != nil {
+		return
+	}
+	c.JSON(http.StatusOK, task)
+
 }
